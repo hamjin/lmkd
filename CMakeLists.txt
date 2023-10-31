@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 project(lmkd)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_C_STANDARD 17)
 set(CMAKE_BUILD_TYPE Release)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -fPIE -Wall -stdlib=libc++ -O3 -flto")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++20 -Wall -O3 -flto -Wall -Werror -Wno-c99-designator")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fforce-emit-vtables")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvirtual-function-elimination -fwhole-program-vtables")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fintegrated-as --static")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DANDROID_UTILS_REF_BASE_DISABLE_IMPLICIT_CONSTRUCTION")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64 -DLMKD_LOG_STATS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DLIBLOG_LOG_TAG=1006 -DSNET_EVENT_LOG_TAG=1397638484")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DANDROID_DEBUGGABLE=0")
 set(CMAKE_LINK_LIBRARY_FLAG "${CMAKE_LINK_LIBRARY_FLAG} -fuse-ld=lld -static-libstdc++")
@@ -37,6 +34,7 @@ file(GLOB_RECURSE SRCS
         lmkd.cpp
         reaper.cpp
         watchdog.cpp
+        statslog.cpp
         liblmkd_utils.cpp
         libpsi/psi.cpp
         libprocessgroup/cgroup_map.cpp

@@ -19,7 +19,7 @@
 #include <fcntl.h>
 #include <log/log.h>
 #include <log/log_id.h>
-#include <statslog.h>
+#include "statslog.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdlib.h>
