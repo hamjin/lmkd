@@ -273,10 +273,12 @@ void removeAllProcessGroupsInternal(bool empty_only) {
     std::vector<std::string> cgroups;
     std::string path, memcg_apps_path;
 
-    if (CgroupGetControllerPath(CGROUPV2_CONTROLLER_NAME, &path)) {
+    if (CgroupGetControllerPath(CGROUPV2_HIERARCHY_NAME, &path))
+    {
         cgroups.push_back(path);
     }
-    if (CgroupGetMemcgAppsPath(&memcg_apps_path) && memcg_apps_path != path) {
+    if (CgroupGetMemcgAppsPath(&memcg_apps_path) && memcg_apps_path != path)
+    {
         cgroups.push_back(memcg_apps_path);
     }
 
@@ -295,7 +297,7 @@ void removeAllProcessGroupsInternal(bool empty_only) {
                     continue;
                 }
 
-                auto path = StringPrintf("%s/%s", cgroup_root_path.c_str(), dir->d_name);
+                path = StringPrintf("%s/%s", cgroup_root_path.c_str(), dir->d_name);
                 if (!RemoveUidProcessGroups(path, empty_only)) {
                     LOG(VERBOSE) << "Skip removing " << path;
                     continue;
@@ -456,7 +458,7 @@ static int KillProcessGroup(uid_t uid, int initialPid, int signal, int retries,
 
     std::string hierarchy_root_path;
     if (CgroupsAvailable()) {
-        CgroupGetControllerPath(CGROUPV2_CONTROLLER_NAME, &hierarchy_root_path);
+        CgroupGetControllerPath(CGROUPV2_HIERARCHY_NAME, &hierarchy_root_path);
     }
     const char* cgroup = hierarchy_root_path.c_str();
 
@@ -545,7 +547,7 @@ int killProcessGroupOnce(uid_t uid, int initialPid, int signal, int* max_process
 int sendSignalToProcessGroup(uid_t uid, int initialPid, int signal) {
     std::string hierarchy_root_path;
     if (CgroupsAvailable()) {
-        CgroupGetControllerPath(CGROUPV2_CONTROLLER_NAME, &hierarchy_root_path);
+        CgroupGetControllerPath(CGROUPV2_HIERARCHY_NAME, &hierarchy_root_path);
     }
     const char* cgroup = hierarchy_root_path.c_str();
     return DoKillProcessGroupOnce(cgroup, uid, initialPid, signal);
@@ -619,7 +621,7 @@ int createProcessGroup(uid_t uid, int initialPid, bool memControl) {
     }
 
     std::string cgroup;
-    CgroupGetControllerPath(CGROUPV2_CONTROLLER_NAME, &cgroup);
+    CgroupGetControllerPath(CGROUPV2_HIERARCHY_NAME, &cgroup);
     return createProcessGroupInternal(uid, initialPid, cgroup, true);
 }
 

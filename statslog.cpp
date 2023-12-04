@@ -32,6 +32,7 @@
 
 #include <string>
 
+#include "lmkd.h"
 #include <processgroup/processgroup.h>
 
 #ifdef LMKD_LOG_STATS
@@ -67,13 +68,14 @@ static struct proc* pid_lookup(int pid) {
     return procp;
 }
 
-static void memory_stat_parse_line(char* line, struct memory_stat* mem_st) {
+static void memory_stat_parse_line(const char *line, struct memory_stat *mem_st) {
     char key[MAX_TASKNAME_LEN + 1];
     int64_t value;
 
     sscanf(line, "%" STRINGIFY(MAX_TASKNAME_LEN) "s  %" SCNd64 "", key, &value);
 
-    if (strcmp(key, "total_") < 0) {
+    if (strcmp(key, "total_") < 0)
+    {
         return;
     }
 
@@ -96,14 +98,16 @@ static int memory_stat_from_cgroup(struct memory_stat* mem_st, int pid, uid_t ui
         return -1;
     }
 
-    FILE* fp = fopen(path.c_str(), "r");
+    FILE *fp = fopen(path.c_str(), "r");
 
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         return -1;
     }
 
-    char buf[PAGE_SIZE];
-    while (fgets(buf, PAGE_SIZE, fp) != NULL) {
+    char buf[LINE_MAX];
+    while (fgets(buf, LINE_MAX, fp) != NULL)
+    {
         memory_stat_parse_line(buf, mem_st);
     }
     fclose(fp);
@@ -334,18 +338,6 @@ size_t lmkd_pack_set_kill_occurred(LMK_KILL_OCCURRED_PACKET packet,
 
     index = pack_string(packet, index, kill_stat->taskname);
     return index;
-}
-
-size_t lmkd_pack_set_state_changed(LMKD_CTRL_PACKET packet,
-                                   enum lmk_state state) {
-    if (!enable_stats_log) {
-        return 0;
-    }
-
-    packet[0] = htonl(LMK_STAT_STATE_CHANGED);
-    packet[1] = htonl(state);
-
-    return 2 * sizeof(int);
 }
 
 #endif /* LMKD_LOG_STATS */
